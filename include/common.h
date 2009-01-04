@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <string>
 #include <fstream>
+#include <stdio.h>
 
 #include "Config.h"
 #include "FileConfig.h"

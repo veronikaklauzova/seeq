@@ -13,7 +13,7 @@ FileConfig::~FileConfig(void){}
 void FileConfig::Load(){
 	std::fstream fileStream(m_fileName.c_str(),std::ios::in);
 	if(fileStream.bad()){
-		LOG("File stream is bad, loading defaults.",WARNING);
+		sLog->Log(WARNING,"File stream is bad, loading defaults.");
 		LoadDefaults();
 	} else {
 		//loading itself.
@@ -22,9 +22,7 @@ void FileConfig::Load(){
 		while(!fileStream.eof()){
 			fileStream.getline(curLine,1024);
 			if(fileStream.fail()){
-				char buff[32];
-				_itoa_s(lineNum, buff, 32, 10);
-				LOG("Error at config line "+std::string()+". Line too long?", WARNING);
+				sLog->Log(WARNING,"Error at config line %ld. Line too long?",lineNum);
 				//skipping till next line
 				while(fileStream.fail() && !fileStream.eof()){
 					fileStream.clear(fileStream.rdstate()^std::ios::failbit);
@@ -48,7 +46,7 @@ void FileConfig::Load(){
 void FileConfig::Save(){
 	std::fstream fileStream(m_fileName.c_str(), std::ios::out);
 	if(fileStream.bad()){
-		LOG("Config not saved: fileStream is bad.", ERROR);
+		sLog->Log(ERROR,"Config wasn't saved: fileStream is bad.");
 		return;
 	}
 	std::tr1::unordered_map<std::string, std::string>::iterator it;

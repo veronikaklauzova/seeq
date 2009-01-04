@@ -27,7 +27,7 @@ void Config::LoadDefaults(){
 
 Config* Config::Get(){
 	if(!g_Config){
-		LOG("config is not initialized",ERROR);
+		sLog->Log(ERROR,"config is not initialized");
 	}
 	return g_Config;
 }

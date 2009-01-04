@@ -4,11 +4,16 @@
  */
 #include "common.h"
 #include <time.h>
+#include <stdarg.h>
 
-Logger* g_Logger = 0; ///<global var for current logger.
+Logger::Logger():m_ostream(0){}
 
-Logger::Logger(eLogLevel level, std::string fileName)
+void Logger::Init(eLogLevel level, std::string fileName)
 {
+	//prevents leak on reinitialize
+	if(m_ostream != &std::cout){
+		delete m_ostream;
+	}
 	if(fileName != ""){
 		m_ostream = new std::ofstream(fileName.c_str());
 		if(m_ostream->bad())
@@ -16,9 +21,8 @@ Logger::Logger(eLogLevel level, std::string fileName)
 	} else {
 		m_ostream = &std::cout;
 	}
-	//std::cout<<"Logging started for the events of level "<<level<<" and above."<<std::endl;
+	
 	m_logLevel = level;
-	g_Logger = this;
 }
 
 Logger::~Logger(void)
@@ -26,36 +30,34 @@ Logger::~Logger(void)
 	if(m_ostream != &std::cout){
 		delete m_ostream;
 	}
-	if(g_Logger == this){
-		g_Logger = 0;
-	}
 }
 
-void Logger::Log(std::string message, eLogLevel level){
+void Logger::Log(eLogLevel level, const char* message, ...){
+	if(!m_ostream) return;
 	if(level >= m_logLevel){
-		std::string outStr("[");
-		char buff[16];
-		_strtime_s(buff,16);
-		outStr += buff;
+		std::string outStrPref("[");
+		char buff[16*1024];
+		_strtime_s(buff,1024);
+		outStrPref += buff;
 		switch(level){
+			case DEBUG:
+				outStrPref += "][DEBUG] ";
+				break;
 			case NOTICE:
-				outStr += "][NOTICE] ";
+				outStrPref += "][NOTICE] ";
 				break;
 			case WARNING:
-				outStr += "][WARNING] ";
+				outStrPref += "][WARNING] ";
 				break;
 			case ERROR:
-				outStr += "][ERROR] ";
+				outStrPref += "][ERROR] ";
 				break;
 		}
-		outStr += message;
-		(*m_ostream)<<outStr<<std::endl;
-	}
-}
+		va_list args;
 
-void _LOG(std::string message, eLogLevel level){
-	if(g_Logger == 0){
-		return;
+		va_start(args, message);
+		vsprintf_s(buff, 16*1024, message, args);
+
+		(*m_ostream)<<outStrPref<<buff<<std::endl;
 	}
-	g_Logger->Log(message, level);
 }
