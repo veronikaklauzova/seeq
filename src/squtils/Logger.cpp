@@ -11,7 +11,7 @@ Logger::Logger():m_ostream(0){}
 void Logger::Init(eLogLevel level, std::string fileName)
 {
 	//prevents leak on reinitialize
-	if(m_ostream != &std::cout){
+	if(m_ostream && m_ostream != &std::cout){
 		delete m_ostream;
 	}
 	if(fileName != ""){
