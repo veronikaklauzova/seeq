@@ -100,7 +100,7 @@ namespace ZThread {
 
 #ifndef NDEBUG
 
-    if(!_waiters.empty()) { 
+    if(_waiters.size() > 0) { 
 
       ZTDEBUG("** You are destroying a semaphore which is blocking %d threads. **\n", _waiters.size());
       assert(0); // Destroyed semaphore while in use

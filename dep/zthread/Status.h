@@ -61,7 +61,7 @@ namespace ZThread {
 
     } STATE;
 
-    Status() : _pending((unsigned short)INVALID), _mask((unsigned short)ANYTHING) { }
+    Status() : _pending(INVALID), _mask(ANYTHING) { }
   
     /**
      * Set the mask for the STATE's that next() will report.

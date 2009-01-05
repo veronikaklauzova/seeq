@@ -121,10 +121,10 @@ namespace ZThread {
 
         Guard<LockType> g(_lock);
 
-        while(_queue.empty() && !_canceled)
+        while(_queue.size() == 0 && !_canceled)
           _notEmpty.wait();
 
-        if( _queue.empty() )
+        if( _queue.size() == 0 )
           throw Cancellation_Exception();
         
         T item = _queue.front();
@@ -158,12 +158,12 @@ namespace ZThread {
 
         Guard<LockType> g(_lock, timeout);
 
-        while(_queue.empty() && !_canceled) {
+        while(_queue.size() == 0 && !_canceled) {
           if(!_notEmpty.wait(timeout))
             throw Timeout_Exception();
         }
 
-        if(_queue.empty() )
+        if(_queue.size() == 0 )
           throw Cancellation_Exception();
   
         T item = _queue.front();

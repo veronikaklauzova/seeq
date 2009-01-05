@@ -52,7 +52,7 @@ public:
   }
 
   inline unsigned long seconds() const {
-    return (unsigned long)_value.time;
+    return _value.time;
   }
 
   inline unsigned long milliseconds() const {  

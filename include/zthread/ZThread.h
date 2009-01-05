@@ -24,7 +24,7 @@
 #define __ZTLIBRARY_H__
 
 
-#include "zthread/Barrier.h"
+//#include "zthread/Barrier.h"
 #include "zthread/BiasedReadWriteLock.h"
 #include "zthread/BlockingQueue.h"
 #include "zthread/BoundedQueue.h"

@@ -111,7 +111,7 @@ MutexImpl<List, Behavior>::~MutexImpl() {
 
     }
 
-    if(!_waiters.empty()) { 
+    if(_waiters.size() > 0) { 
 
       ZTDEBUG("** You are destroying a mutex which is blocking %d threads. **\n", _waiters.size());
       assert(0); // Destroyed mutex while in use
@@ -153,7 +153,7 @@ void MutexImpl<List, Behavior>::acquire() {
 
       _owner = self;
 
-      this->ownerAcquired(self);
+      ownerAcquired(self);
       
     }
 
@@ -164,7 +164,7 @@ void MutexImpl<List, Behavior>::acquire() {
       _waiters.insert(self);
       m.acquire();
 
-      this->waiterArrived(self);
+      waiterArrived(self);
 
       {        
       
@@ -173,7 +173,7 @@ void MutexImpl<List, Behavior>::acquire() {
       
       }
 
-      this->waiterDeparted(self);
+      waiterDeparted(self);
 
       m.release();
         
@@ -192,7 +192,7 @@ void MutexImpl<List, Behavior>::acquire() {
           assert(_owner == 0);
           _owner = self;    
 
-          this->ownerAcquired(self);
+          ownerAcquired(self);
 
           break;
         
@@ -236,7 +236,7 @@ bool MutexImpl<List, Behavior>::tryAcquire(unsigned long timeout) {
 
       _owner = self;
 
-      this->ownerAcquired(self);
+      ownerAcquired(self);
       
     }
 
@@ -253,7 +253,7 @@ bool MutexImpl<List, Behavior>::tryAcquire(unsigned long timeout) {
       
         m.acquire();
 
-        this->waiterArrived(self);
+        waiterArrived(self);
       
         {
         
@@ -262,7 +262,7 @@ bool MutexImpl<List, Behavior>::tryAcquire(unsigned long timeout) {
         
         }
 
-        this->waiterDeparted(self);
+        waiterDeparted(self);
       
         m.release();
         
@@ -284,7 +284,7 @@ bool MutexImpl<List, Behavior>::tryAcquire(unsigned long timeout) {
           assert(0 == _owner);
           _owner = self;
 
-          this->ownerAcquired(self);
+          ownerAcquired(self);
         
           break;
         
@@ -326,7 +326,7 @@ void MutexImpl<List, Behavior>::release() {
 
     _owner = 0;
 
-    this->ownerReleased(impl);
+    ownerReleased(impl);
   
     // Try to find a waiter with a backoff & retry scheme
     for(;;) {

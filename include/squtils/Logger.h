@@ -5,17 +5,19 @@
 #include <string>
 #include <iostream>
 #include "zthread/Singleton.h"
+#include "zthread/Guard.h"
+#include "zthread/ZThread.h"
 
 #pragma once
 
-
 ///enum for defining relative danger of log enty.
-enum eLogLevel{
-	DEBUG,//!< log debug msgs and above
-	NOTICE,//!< log notices and above
-	WARNING,//!< log warnings and above
-	ERROR //!< log only critical errors
-};
+	///stupid LVL_ prefix forced by '#define ERROR 0' in one of windows headers
+	enum eLogLevel{
+		LVL_DEBUG,//!< log debug msgs and above
+		LVL_NOTICE,//!< log notices and above
+		LVL_WARNING,//!< log warnings and above
+		LVL_ERROR //!< log only critical errors
+	};
 
 /**
  A simple logger class.
@@ -40,6 +42,7 @@ public:
 	 Main logger function.
 	 Call this when u want to log anything.
 	 @param level Message danger-level. One of
+			- DEBUG
 			- NOTICE
 			- WARNING
 			- ERROR
@@ -49,6 +52,7 @@ public:
 private:
 	eLogLevel m_logLevel;///< level of logging
 	std::ostream *m_ostream;///< stream, in which all logs will go
+	ZThread::FastMutex m_lock; ///< lock for multithreading
 };
 /*///"macro" function for logging from anywhere, if %Logger was created. Uses last created logger.
 void _LOG(std::string message, eLogLevel level);
