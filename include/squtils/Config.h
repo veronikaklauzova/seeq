@@ -1,18 +1,21 @@
 #pragma once
 #include <unordered_map>
 #include <string>
+#include "zthread/Singleton.h"
 /**
  Basic class for game configuration purposes.
  Mostly virtual.
  @sa %FileConfig
  @todo make %RegistryConfig
+ @version 0.2
+ @warning NOT thread-safe. Use with caution.
  */
-class Config
-{
+class Config {
 protected:
-	Config(void);///<ctor is protected: prohibits class creation. Use child class instead.
+	Config(){}///<ctor is protected: prohibits class creation. Use child class instead.
 public:
-	virtual ~Config(void);
+	//virtual void Init() = 0;///<initializes config
+	virtual ~Config(){}
 	virtual void Load() = 0; ///< load stored configuration.
 	virtual void Save() = 0; ///< save stored configuration.
 	/**
@@ -24,10 +27,11 @@ public:
 	 may be add a param to param ( :D ), deciding the type and converting on first call.
 	 */
 	std::string GetParam(std::string paramName);
+	long GetLong(std::string paramName);///<Reads param and converts it to long
 	void SetParam(std::string paramName, std::string value);///< simply sets param into value.
 	void LoadDefaults();///< load default settings
 
-	Config* Get();///<returns current config (
+
 protected:
 	std::tr1::unordered_map<std::string, std::string> m_params;
 };

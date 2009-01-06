@@ -1,6 +1,12 @@
+/**
+ @file seeqd.cpp
+ The main seeq daemon file, has entry point.
+ */
+
 #include <tchar.h>
 #include <time.h> //KILL MEEEEEEEEEEEEE
 #include "squtils/Logger.h"
+#include "squtils/FileConfig.h"
 #include "zthread/ZThread.h"
 
 
@@ -25,12 +31,14 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	srand((unsigned)time(NULL));
 	sLog->Init(LVL_DEBUG);
+	sConfig->Init("config.cfg");
 	sLog->Log(LVL_DEBUG,"-= Console testing =-");
 	sLog->Log(LVL_NOTICE,"-= Notice =-");
 	sLog->Log(LVL_WARNING,"-= Warning =-");
 	sLog->Log(LVL_ERROR,"-= Error =-");
-	ZThread::PoolExecutor executor(20);
-	for(int i=0;i<20;i++){
+	long poolSize = sConfig->GetLong("threadPoolSize");
+	ZThread::PoolExecutor executor(poolSize);
+	for(int i=0;i<poolSize;i++){
 		executor.execute(new Flooder(i+1,rand()));
 	}
 	std::cin.get();
