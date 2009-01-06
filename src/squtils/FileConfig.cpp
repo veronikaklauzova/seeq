@@ -1,19 +1,20 @@
 #include "common.h"
 
 
-FileConfig::FileConfig(std::string fileName):Config(){
+void FileConfig::Init(std::string fileName){
 	m_fileName = fileName;
+	this->Load();
 }
 
 FileConfig::~FileConfig(void){}
 /**
- There is a function, that walks thrue a stream and parses it into params with values.
+ There is a function, that walks thru a stream and parses it into params with values.
  File rules are simple: [param] = [value] and string starting with '#' is comment.
  */
 void FileConfig::Load(){
-	std::fstream fileStream(m_fileName.c_str(),std::ios::in);
-	if(fileStream.bad()){
-		sLog->Log(LVL_WARNING,"File stream is bad, loading defaults.");
+	std::ifstream fileStream(m_fileName.c_str(),std::ios_base::in);
+	if(fileStream.fail() || fileStream.bad()){
+		sLog->Log(LVL_WARNING,"File stream is fail/bad, loading defaults.");
 		LoadDefaults();
 	} else {
 		//loading itself.

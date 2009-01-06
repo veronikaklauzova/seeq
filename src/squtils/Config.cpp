@@ -1,19 +1,12 @@
 #include "common.h"
-
-
-Config* g_Config = 0; ///<global var for current config
-
-Config::Config(void){
-	g_Config = this;
-}
-Config::~Config(void){
-	if(g_Config == this){
-		g_Config = 0;
-	}
-}
+#include "Config.h"
 
 std::string Config::GetParam(std::string paramName){
 	return m_params[paramName];
+}
+
+long Config::GetLong(std::string paramName){
+	return atol(m_params[paramName].c_str());
 }
 
 void Config::SetParam(std::string paramName, std::string value){
@@ -23,11 +16,5 @@ void Config::SetParam(std::string paramName, std::string value){
 void Config::LoadDefaults(){
 	m_params.clear();
 	m_params["port"] = "7334";
-}
-
-Config* Config::Get(){
-	if(!g_Config){
-		sLog->Log(LVL_ERROR,"config is not initialized");
-	}
-	return g_Config;
+	m_params["threadPoolSize"] = "5";
 }
