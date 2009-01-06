@@ -1,5 +1,4 @@
 #include "common.h"
-#include "Config.h"
 
 std::string Config::GetParam(std::string paramName){
 	return m_params[paramName];
