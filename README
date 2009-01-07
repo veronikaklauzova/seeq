@@ -1,2 +1,14 @@
 seeq is my little project.
-Hope it will be finished.
+Hope it will be finished. Realy, not "finished soon", just "finished".
+
+Current status:
+- NO game client at all :)
+- STARTED server daemon (seeqd)
+	1. INPROGRESS utils
+		a. DONE log
+		b. DONE config
+		c. NO packetlist
+	2. NO network manager.
+	3. STARTED world manipulator.
+		a. DONE timered events for world
+		b. STARTED message request from network queueing.
