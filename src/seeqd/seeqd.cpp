@@ -8,6 +8,7 @@
 #include "squtils/Logger.h"
 #include "squtils/FileConfig.h"
 #include "zthread/ZThread.h"
+#include "seeqd/NetworkManager.h"
 #include "seeqd/World.h"
 
 
@@ -32,7 +33,12 @@ void SignalHandler(int signal)
 {
 	LOG(LVL_NOTICE, "Signal handling: shutting down.(SIG: %d)",signal);
 	sWorld->cancel();
+	sNetMan->cancel();
 }
+
+class Stub: public ZThread::Runnable{
+	void run(){}
+};
 
 
 int _tmain(int argc, _TCHAR* argv[])
@@ -43,21 +49,25 @@ int _tmain(int argc, _TCHAR* argv[])
 	sLog->Log(LVL_NOTICE,"-= Notice =-");
 	sLog->Log(LVL_WARNING,"-= Warning =-");
 	sLog->Log(LVL_ERROR,"-= Error =-");*/
+	sNetMan->Init();
 	sWorld->Init();
+
+	ZThread::ThreadedExecutor executor;
+
+	//there is a hack :(
+	//i will NOT delete those tasks and free memory
+	ZThread::Task *worldTask = new ZThread::Task(sWorld);
+	ZThread::Task *netmanTask = new ZThread::Task(sNetMan);
+	//coz Task::~Task() frees Runnable deriviants(world,netman)
+	//but they are singletoned, so will be freed again at exiting
+	//which causes segfault :(
+
+	executor.execute(*netmanTask);//running netman in separate thread
+	executor.execute(*worldTask);//running world in separate thread
 
 	signal(SIGINT, SignalHandler);
 	signal(SIGTERM, SignalHandler);
 
-	sWorld->Run();
-	
-	/*long poolSize = sConfig->GetLong("threadPoolSize");
-	ZThread::PoolExecutor executor(poolSize);
-	for(int i=0;i<poolSize;i++){
-		executor.execute(new Flooder(i+1,rand()));
-	}
-	std::cin.get();
-	executor.interrupt();
 	executor.wait();
-	//executor.cancel();*/
 	return 0;
 }

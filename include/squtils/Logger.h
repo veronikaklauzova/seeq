@@ -42,10 +42,10 @@ public:
 	 Main logger function.
 	 Call this when u want to log anything.
 	 @param level Message danger-level. One of
-			- DEBUG
-			- NOTICE
-			- WARNING
-			- ERROR
+			- LVL_DEBUG
+			- LVL_NOTICE
+			- LVL_WARNING
+			- LVL_ERROR
 	@param message format string for message u like to write
 	 */
 	void Log(eLogLevel level, const char* message, ...);

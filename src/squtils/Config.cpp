@@ -15,5 +15,5 @@ void Config::SetParam(std::string paramName, std::string value){
 void Config::LoadDefaults(){
 	m_params.clear();
 	m_params["port"] = "7334";
-	m_params["threadPoolSize"] = "5";
+	m_params["threadPoolSize"] = "1";
 }

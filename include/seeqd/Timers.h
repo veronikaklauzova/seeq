@@ -29,7 +29,7 @@ public:
 	*/
 	Timer(eTimerType type, unsigned long interval, ZThread::Runnable *callback):
 	  m_type(type),m_interval(interval),m_callback(callback){}
-	void Free(){if(m_callback) delete m_callback;}
+	void Free(){if(m_callback) delete m_callback;}///<Frees callback object. Use this, when permanently destroying timer
 	unsigned long GetInterval() const {return m_interval;}
 	eTimerType GetType() const {return m_type;}
 	void execute() const {m_callback->run();}

@@ -12,7 +12,7 @@
 	- Numerous handlers for each message type.
 	- Ordered list of "timers".
  */
-class World : public ZThread::Singleton<World>, public ZThread::Cancelable {
+class World : public ZThread::Singleton<World>, public ZThread::Runnable, public ZThread::Cancelable {
 protected:
 	ZThread::BlockingQueue<WorldMessage *, ZThread::FastMutex> m_messageQueue;
 	TimersQueue m_timersQueue;
@@ -25,9 +25,9 @@ public:
 	 @param message The message itself. Passed byref, but 
 	 the copy will be created for queueing.
 	*/
-	void PutMessage(WorldMessage &message);
+	void PutMessage(const WorldMessage &message);
 	void Init();
-	void Run();
+	void run();
 
 	bool isCanceled(){return m_canceled;}
 	void cancel(){m_canceled = true;}

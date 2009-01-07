@@ -61,6 +61,7 @@
 #include "zthread/SynchronousExecutor.h"
 #include "zthread/Thread.h"
 #include "zthread/ThreadLocal.h"
+#include "zthread/ThreadedExecutor.h"
 #include "zthread/Time.h"
 #include "zthread/Waitable.h"
 

@@ -1,12 +1,12 @@
-#include <vector>
 #pragma once
-
-enum eWorldMessageType{
-	WOM_TALK
-};
+#include <vector>
+#include "seeqd/NetworkSession.h"
 
 ///Message for World::MessageQueue
 struct WorldMessage {
-	eWorldMessageType type;
+	enum eWorldMessageType{
+		TYPE_TALK
+	} type;
+	NetworkSession sender;///<a copy of sender session.
 	std::vector<unsigned char> data;
 };
