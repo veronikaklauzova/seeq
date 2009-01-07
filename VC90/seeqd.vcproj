@@ -177,12 +177,32 @@
 				RelativePath="..\src\seeqd\seeqd.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\src\seeqd\Timers.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\seeqd\World.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath="..\include\seeqd\Timers.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\seeqd\World.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\seeqd\WorldMessage.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"

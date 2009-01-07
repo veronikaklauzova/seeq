@@ -54,10 +54,6 @@ private:
 	std::ostream *m_ostream;///< stream, in which all logs will go
 	ZThread::FastMutex m_lock; ///< lock for multithreading
 };
-/*///"macro" function for logging from anywhere, if %Logger was created. Uses last created logger.
-void _LOG(std::string message, eLogLevel level);
-
-#define LOG(m,l) _LOG(std::string("<")+__FUNCTION__+"> "+m,l);
-*/
 
 #define sLog Logger::instance()
+#define LOG Logger::instance()->Log
