@@ -77,7 +77,7 @@ TimersQueue::~TimersQueue(){
 		);
 
 	//i've been fucking my brains out for 10 minutes trying to use all that neat binders
-	//BUT WTF
+	//BUT WTF?
 	//IT USED TO BE SIMPLIER, THAT
 	/*std::multimap<unsigned long, Timer>::iterator it;
 	for(it = m_timers.begin(); it!= m_timers.end(); it++)

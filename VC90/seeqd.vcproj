@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="squtils.lib zthread.lib"
+				AdditionalDependencies="squtils.lib zthread.lib wsock32.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)..\lib&quot;"
 				GenerateDebugInformation="true"

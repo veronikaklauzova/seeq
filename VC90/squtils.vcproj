@@ -184,6 +184,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\include\squtils\NetworkPackets.h"
+				>
+			</File>
+			<File
 				RelativePath="..\include\squtils\Utils.h"
 				>
 			</File>
