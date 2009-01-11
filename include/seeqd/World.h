@@ -14,7 +14,7 @@
  */
 class World : public ZThread::Singleton<World>, public ZThread::Runnable, public ZThread::Cancelable {
 protected:
-	ZThread::BlockingQueue<WorldMessage *, ZThread::FastMutex> m_messageQueue;
+	ZThread::BlockingQueue<std::tr1::shared_ptr<WorldMessage> , ZThread::FastMutex> m_messageQueue;
 	TimersQueue m_timersQueue;
 	bool m_canceled;
 public:
@@ -22,10 +22,9 @@ public:
 	 Puts message to a world queue.
 	 Any message lying there will be extracted in main world loop,
 	 then redirected to handler (wich is defined by WorldMessage.type) in pooled thread.
-	 @param message The message itself. Passed byref, but 
-	 the copy will be created for queueing.
+	 @param message The message itself. Passed by shared_ptr.
 	*/
-	void PutMessage(const WorldMessage &message);
+	void PutMessage(const std::tr1::shared_ptr<WorldMessage> &message);
 	void Init();
 	void run();
 

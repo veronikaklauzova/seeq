@@ -2,15 +2,20 @@
 #include "zthread/Runnable.h"
 #include "seeqd/WorldMessage.h"
 
+/**
+ World handler for handling WorldMessage::TYPE_TALK packets.
+ There is just a phrase, that player says in a packet(message) body.
+*/
 class TalkHandler: public ZThread::Runnable{
 private:
 	TalkHandler(){}//prevent empty creation
-	WorldMessage *m_msg;
+	std::tr1::shared_ptr<WorldMessage> m_msg;
 public:
 	void run();
 	/**
 	 Handler ctor.
-	 @warning msg should NOT be deleted after passing, it frees in ::run().
+	 @warning shared_ptr WILL nullify passed pointer. so do NOT use ur WorldMessage * after u pass it here.
 	 */
-	TalkHandler(WorldMessage *msg):m_msg(msg){}
+	TalkHandler(const std::tr1::shared_ptr<WorldMessage> &msg):m_msg(msg){}
+	//TalkHandler(WorldMessage *msg):m_msg(msg){}
 };

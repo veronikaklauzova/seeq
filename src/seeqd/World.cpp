@@ -9,8 +9,8 @@
 
 #include <string> //kill meeeeeeeee
 
-void World::PutMessage(const WorldMessage &message){
-	m_messageQueue.add(new WorldMessage(message));//creating new copy of message
+void World::PutMessage(const std::tr1::shared_ptr<WorldMessage> &message){
+	m_messageQueue.add(message);
 }
 
 class GoofyMessanger: public ZThread::Runnable{
@@ -19,10 +19,10 @@ public:
 	GoofyMessanger(const char * msg):m_msg(msg){}
 	void run(){
 		//sLog->Log(LVL_DEBUG,m_msg.c_str());
-		WorldMessage msg;
-		msg.sender.id = 1;
-		msg.data.assign(m_msg.begin(), m_msg.end());
-		msg.type = WorldMessage::TYPE_TALK;
+		std::tr1::shared_ptr<WorldMessage> msg(new WorldMessage);
+		msg->sender.id = 1;
+		msg->data.assign(m_msg.begin(), m_msg.end());
+		msg->type = WorldMessage::TYPE_TALK;
 		sWorld->PutMessage(msg);
 	}
 };
@@ -35,11 +35,11 @@ void World::Init(){
 
 void World::run(){
 	ZThread::PoolExecutor poolExecutor(sConfig->GetLong("threadPoolSize"));
-	LOG(LVL_DEBUG,"World is running");
+	LOG(LVL_DEBUG,"World::run()");
 	while(!isCanceled()){
 		try{
 			unsigned long delay = m_timersQueue.ShootTimers(GetTickCount());
-			WorldMessage *wMsg = m_messageQueue.next(delay);
+			std::tr1::shared_ptr<WorldMessage> wMsg = m_messageQueue.next(delay);
 			switch(wMsg->type){
 				case WorldMessage::TYPE_TALK:
 					poolExecutor.execute(ZThread::Task(new TalkHandler(wMsg)));

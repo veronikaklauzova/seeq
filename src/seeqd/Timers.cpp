@@ -3,6 +3,7 @@
 #include "seeqd/Timers.h"
 #include <windows.h> //GetTickCount()
 #include "squtils/Logger.h"
+#include <algorithm>
 
 
 void TimersQueue::AddTimer(const Timer &timer, unsigned long startTime){
@@ -16,7 +17,7 @@ void TimersQueue::AddTimer(const Timer &timer, unsigned long startTime){
 		/**
 		 @bug overflow shurely happens if the system runs longer, than about 50 days.
 		 and this is realy bad, coz all the timers will stuck now, and this 
-		 one will fire for 50 days. Solution 1: don't count by GetTickCount().
+		 one will fire for 50 days. Solution: don't count by GetTickCount(), use diffs every time.
 		 Temporary solution is to requeue all the timers.
 		 Bad thing about it is few (or if interval of current timer is waay too big
 		 then many) skipped shoots.
@@ -65,7 +66,20 @@ unsigned long TimersQueue::ShootTimers(unsigned long tillTime){
 	return 1000L;
 }
 TimersQueue::~TimersQueue(){
-	std::multimap<unsigned long, Timer>::iterator it;
+	std::for_each(m_timers.begin(),m_timers.end(),
+		std::tr1::bind(
+			&Timer::Free,
+			std::tr1::bind(
+				&std::multimap<unsigned long, Timer>::value_type::second,
+				std::tr1::placeholders::_1
+				)
+			)
+		);
+
+	//i've been fucking my brains out for 10 minutes trying to use all that neat binders
+	//BUT WTF
+	//IT USED TO BE SIMPLIER, THAT
+	/*std::multimap<unsigned long, Timer>::iterator it;
 	for(it = m_timers.begin(); it!= m_timers.end(); it++)
-		it->second.Free();
+		it->second.Free();*/
 }

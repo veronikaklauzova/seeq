@@ -11,35 +11,12 @@
 #include "seeqd/NetworkManager.h"
 #include "seeqd/World.h"
 
-
-
-/*class Flooder : public ZThread::Runnable{
-public:
-	Flooder(int num, int seed):m_num(num),m_seed(seed){}
-	void run(){
-		try{
-			srand((unsigned)m_seed);
-			while(!ZThread::Thread::interrupted()){
-				sLog->Log(LVL_NOTICE,"Hi! Im thread #%d!",m_num);
-				ZThread::Thread::sleep(rand()%5000);
-			}
-		} catch (...){}
-	}
-private:
-	int m_num, m_seed;
-};*/
-
 void SignalHandler(int signal)
 {
 	LOG(LVL_NOTICE, "Signal handling: shutting down.(SIG: %d)",signal);
 	sWorld->cancel();
 	sNetMan->cancel();
 }
-
-class Stub: public ZThread::Runnable{
-	void run(){}
-};
-
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -68,6 +45,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	signal(SIGINT, SignalHandler);
 	signal(SIGTERM, SignalHandler);
 
-	executor.wait();
+
+	//here must be console processing loop :)
+
+
+	executor.wait();//waiting for runned threads (netman, world) to terminate.
+	//they will be, either by SIGTERM or by internal logic.
 	return 0;
 }
