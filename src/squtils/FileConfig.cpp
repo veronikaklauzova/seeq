@@ -1,8 +1,12 @@
-#include "common.h"
+#include <fstream>
+#include "squtils/FileConfig.h"
+#include "squtils/Logger.h"
+#include "squtils/Utils.h"
 
 
 void FileConfig::Init(std::string fileName){
 	m_fileName = fileName;
+	this->LoadDefaults();
 	this->Load();
 }
 
@@ -15,21 +19,21 @@ void FileConfig::Load(){
 	std::ifstream fileStream(m_fileName.c_str(),std::ios_base::in);
 	if(fileStream.fail() || fileStream.bad()){
 		sLog->Log(LVL_WARNING,"File stream is fail/bad, loading defaults.");
-		LoadDefaults();
+		//LoadDefaults();
 	} else {
 		//loading itself.
 		std::fstream::char_type curLine[1024];
 		long lineNum = 1;//< keeps track of line number
 		while(!fileStream.eof()){
 			fileStream.getline(curLine,1024);
-			if(fileStream.fail()){
+			if(fileStream.fail()&&!fileStream.eof()){
 				sLog->Log(LVL_WARNING,"Error at config line %ld. Line too long?",lineNum);
 				//skipping till next line
 				while(fileStream.fail() && !fileStream.eof()){
 					fileStream.clear(fileStream.rdstate()^std::ios::failbit);
 					fileStream.getline(curLine,1024);
 				}
-			} else {//getline successfull
+			} else if(!fileStream.eof()){//getline successfull
 				std::string line(curLine);
 				trim(line);
 				if(line[0]=='#') continue;

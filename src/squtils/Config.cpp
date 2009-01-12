@@ -1,4 +1,4 @@
-#include "common.h"
+#include "squtils/Config.h"
 
 std::string Config::GetParam(std::string paramName){
 	return m_params[paramName];
@@ -16,5 +16,5 @@ void Config::LoadDefaults(){
 	m_params.clear();
 	m_params["serverIP"] = "127.0.0.1";
 	m_params["port"] = "7334";
-	m_params["threadPoolSize"] = "1";
+	m_params["threadPoolSize"] = "4";
 }

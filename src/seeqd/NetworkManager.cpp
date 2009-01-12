@@ -2,7 +2,7 @@
 #include "zthread/ZThread.h"
 #include "squtils/FileConfig.h"
 #include "squtils/Logger.h"
-#include "squtils/NetworkPackets.h"
+#include "shared/NetworkPackets.h"
 #include "seeqd/World.h"
 //dunno if it works, but FD_SESTIZE=64 is awful
 #define FD_SESTIZE 512
@@ -99,11 +99,19 @@ void NetworkManager::run(){
 					m_sessions.erase(*it);
 				m_dead_sessions.clear();
 			}
+
+			//send all pending data from MQ
+			///@todo it is possible, that data will come SO FAST so it will spin here forever
+			///but it shouldn't :)
+			if(!m_messageQueue.empty()){
+				while(m_messageQueue.size())
+					this->SendToClients(m_messageQueue.next());
+			}
 		} catch(...){LOG(LVL_ERROR,"NetMan exception");}
 	}
 }
 
-void csckt(SOCKET sock){closesocket(sock);}//functions that returns smth r unbindable?
+void csckt(SOCKET sock){closesocket(sock);}//functions that returns smth cant be for_eached?
 
 NetworkManager::~NetworkManager(){
 	//closing all sessions
@@ -149,6 +157,13 @@ void NetworkManager::KillSession(SOCKET sock){
 	closesocket(sock);
 	//m_sessions.erase(sock);//erase is BAD, destroys iterators currently in use.
 	m_dead_sessions.push_back(sock);
+	//form DISCONNECT message for world
+	//to destroy this player related stuff
+	std::tr1::shared_ptr<WorldMessage> msg(new WorldMessage);
+	msg->type = PacketTypes::DISCONNECT;
+	msg->sender = m_sessions[sock];
+	//msg->data - nah, no need in this
+	sWorld->PutMessage(msg);
 }
 
 void NetworkManager::FdRecvFrom(sessions_map::value_type &v){
@@ -189,10 +204,11 @@ void NetworkManager::FormWorldMessage(sessions_map::value_type &v){
 	//next check for 'integrity':
 	//packet type is defined
 	//packet size must be in range for that type
-	if( packetType > NET_PACKET_MAX_TYPE ||
+	if( packetType >= sizeof(NetworkPacketDescriptors)/sizeof(PacketDescriptor) ||
 		packetSize > NetworkPacketDescriptors[packetType].packetMaxSize ||
 		packetSize < NetworkPacketDescriptors[packetType].packetMinSize ){
-			LOG(LVL_WARNING,"Wrong typed/sized packet recieved. Killing session.");
+			LOG(LVL_WARNING,"Wrong typed/sized packet recieved [%d][%d]. Killing session.",
+				(int)packetType, (int)packetSize);
 			//killing session is absolutely unavoidable:
 			//cant determine the size of sended data, so cant
 			//determine where is the next packet is.
@@ -210,7 +226,7 @@ void NetworkManager::FormWorldMessage(sessions_map::value_type &v){
 	//okay! now we know that first packetSize bytes in buffer is complete packet!
 	//create a message from it, and post it to #World
 	std::tr1::shared_ptr<WorldMessage> msg(new WorldMessage);
-	msg->type = (WorldMessage::eWorldMessageType)packetType;//yeah, pretty bad. need to synchro them :(
+	msg->type = (PacketTypes::ePacketType)packetType;//yeah, pretty bad. need to synchro them :(
 	msg->data.reserve(packetSize - NET_PACKET_HEADER_SIZE);
 	msg->data.assign(v.second.recv_buffer.begin() + NET_PACKET_HEADER_SIZE,
 		v.second.recv_buffer.begin()+packetSize);
@@ -219,4 +235,34 @@ void NetworkManager::FormWorldMessage(sessions_map::value_type &v){
 		v.second.recv_buffer.begin()+packetSize);
 	msg->sender = v.second;
 	sWorld->PutMessage(msg);
+}
+
+void NetworkManager::PutMessage(const std::tr1::shared_ptr<NetworkMessage> &message){
+	m_messageQueue.add(message);
+}
+
+void NetworkManager::ModifySessionString(SOCKET sessionId,
+		NetworkSession::eModyfiableField fieldId,
+		const std::string &value)
+{
+	ZThread::Guard<ZThread::FastMutex> g(m_lock_sessions);
+	switch(fieldId){
+		case NetworkSession::FIELD_LOGIN:
+			m_sessions[sessionId].login = value;
+			break;
+	}
+}
+
+void NetworkManager::SendToClients(const std::tr1::shared_ptr<NetworkMessage> &message){
+	///@bug DEFINETELY there must be streaming fixes, like while recv()'ing
+	std::list<SOCKET>::const_iterator it;
+	for(it = message->recievers.begin();it != message->recievers.end(); it++){
+		unsigned int result = send(*it,(char *)&message->data[0],message->data.size(),0);
+		if(result == SOCKET_ERROR){
+			LOG(LVL_ERROR, "NetMan: Error while send()'ing data: %d.", WSAGetLastError());
+		} else if(result < message->data.size()){
+			LOG(LVL_WARNING, "NetMan: There is less data send()'ed that should be. \
+							Connection can be corrupted (at list now its DEFENITELY corrupted :)).");
+		}
+	}
 }

@@ -23,3 +23,12 @@ enum eConColor {
  U must clear the color after u printed ur message.
  */
 void SetConColor(eConColor clr, bool intensified = false);
+
+///pack template for network packets forming
+///@param dest is a pointer byref:
+///its mooved by function automaticaly
+template<class T> void pack(const T &value, unsigned char *&dest);
+///unpack template for network packets reading
+///@param source is a pointer byref:
+///its mooved by function automaticaly
+template<class T> T unpack(const unsigned char *&source);

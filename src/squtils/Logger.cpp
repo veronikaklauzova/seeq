@@ -2,10 +2,13 @@
  @file Logger.cpp
  Contains definition for the %Logger class
  */
-#include "common.h"
 #include <time.h>
 #include <stdarg.h>
+#include "squtils/Logger.h"
+#include "squtils/Utils.h"
 #include "zthread/ZThread.h"
+#include <iostream>
+#include <fstream>
 
 Logger::Logger():m_ostream(0){}
 
