@@ -92,8 +92,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)..\bin"
+			IntermediateDirectory="$(SolutionDir)..\Debug\int"
 			ConfigurationType="1"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
@@ -115,14 +115,13 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
-				EnableIntrinsicFunctions="true"
+				AdditionalOptions="/MT"
+				Optimization="3"
+				FavorSizeOrSpeed="1"
+				AdditionalIncludeDirectories="&quot;E:\Programming\MY PROJECTS\seeq\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -135,11 +134,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkIncremental="1"
-				GenerateDebugInformation="true"
+				AdditionalDependencies="squtils.lib zthread.lib wsock32.lib"
+				LinkIncremental="2"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)..\lib&quot;"
+				IgnoreDefaultLibraryNames="MSVCRTD"
+				GenerateDebugInformation="false"
 				SubSystem="1"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -193,6 +193,10 @@
 				RelativePath="..\src\seeqd\WorldHandlers.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\src\seeqd\WorldMap.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -201,6 +205,10 @@
 			>
 			<File
 				RelativePath="..\include\seeqd\NetworkManager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\seeqd\NetworkMessage.h"
 				>
 			</File>
 			<File
@@ -217,6 +225,10 @@
 			</File>
 			<File
 				RelativePath="..\include\seeqd\WorldHandlers.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\seeqd\WorldMap.h"
 				>
 			</File>
 			<File
