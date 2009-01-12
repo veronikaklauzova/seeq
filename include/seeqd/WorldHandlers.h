@@ -2,20 +2,37 @@
 #include "zthread/Runnable.h"
 #include "seeqd/WorldMessage.h"
 
+//helper macro for defining
+#define DECLARE_HANDLER_CLASS(n) \
+class n: public ZThread::Runnable{ \
+	private: \
+		n(){} \
+		std::tr1::shared_ptr<WorldMessage> m_msg; \
+	public: \
+		void run(); \
+		n(const std::tr1::shared_ptr<WorldMessage> &msg):m_msg(msg){} \
+	};
+
 /**
- World handler for handling WorldMessage::TYPE_TALK packets.
+ @class TalkHandler
+ World handler for handling PacketType::TALK packets.
  There is just a phrase, that player says in a packet(message) body.
 */
-class TalkHandler: public ZThread::Runnable{
-private:
-	TalkHandler(){}//prevent empty creation
-	std::tr1::shared_ptr<WorldMessage> m_msg;
-public:
-	void run();
-	/**
-	 Handler ctor.
-	 @warning shared_ptr WILL nullify passed pointer. so do NOT use ur WorldMessage * after u pass it here.
-	 */
-	TalkHandler(const std::tr1::shared_ptr<WorldMessage> &msg):m_msg(msg){}
-	//TalkHandler(WorldMessage *msg):m_msg(msg){}
-};
+DECLARE_HANDLER_CLASS(TalkHandler)
+
+/**
+ @class AuthHandler
+ World handler for handling PacketType::AUTH_REQUEST packets.
+ Player sends in his login in body.
+ Adds player into WorldMap after successfull login.
+ @todo add actual authorization
+*/
+DECLARE_HANDLER_CLASS(AuthHandler)
+
+/**
+ @class DisconnectHandler
+ World handler for handling PacketType::DISCONNECT packets.
+ They r used only inside server now (only now)
+ Removes player from WorldMap and destroys all linked stuff.
+*/
+DECLARE_HANDLER_CLASS(DisconnectHandler)

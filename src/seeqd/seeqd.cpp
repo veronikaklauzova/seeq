@@ -21,7 +21,7 @@ void SignalHandler(int signal)
 int _tmain(int argc, _TCHAR* argv[])
 {
 	sLog->Init(LVL_DEBUG);
-	sConfig->Init("config.cfg");
+	sConfig->Init("seeqd.cfg");
 	/*sLog->Log(LVL_DEBUG,"-= Console testing =-");
 	sLog->Log(LVL_NOTICE,"-= Notice =-");
 	sLog->Log(LVL_WARNING,"-= Warning =-");

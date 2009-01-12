@@ -1,9 +1,8 @@
 #pragma once
 #include "zthread/ZThread.h"
-//#include "zthread/FastMutex.h"
-//#include "zthread/Singleton.h"
 #include "seeqd/WorldMessage.h"
 #include "seeqd/Timers.h"
+#include "seeqd/WorldMap.h"
 
 /**
  A main world-processing server class.
@@ -13,11 +12,13 @@
 	- Ordered list of "timers".
  */
 class World : public ZThread::Singleton<World>, public ZThread::Runnable, public ZThread::Cancelable {
-protected:
+private:
 	ZThread::BlockingQueue<std::tr1::shared_ptr<WorldMessage> , ZThread::FastMutex> m_messageQueue;
 	TimersQueue m_timersQueue;
 	bool m_canceled;
 public:
+	//@todo move me to private
+	WorldMap map;
 	/**
 	 Puts message to a world queue.
 	 Any message lying there will be extracted in main world loop,
