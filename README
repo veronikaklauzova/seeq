@@ -2,13 +2,14 @@ seeq is my little project.
 Hope it will be finished. Realy, not "finished soon", just "finished".
 
 Current status:
-- NO game client at all :)
-- STARTED server daemon (seeqd)
+- NO game client at all :) its just a "chatty" stub now.
+- INPROGRESS server daemon (seeqd)
 	1. INPROGRESS utils
 		a. DONE log
 		b. DONE config
 		c. NO packetlist
-	2. NO network manager.
-	3. STARTED world manipulator.
+	2. DONE network manager.
+	3. INPROGRESS world manipulator.
 		a. DONE timered events for world
-		b. STARTED message request from network queueing.
+		b. NO game logic. delayed till at least stupid client will be ready.
+	4. DONE messaging betwen network and world.
